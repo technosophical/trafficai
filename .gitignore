@@ -1,0 +1,14 @@
+# Ignore Python virtual environments
+venv/
+__pycache__/
+
+# Ignore uploads and processed outputs
+uploads/
+processed/
+
+# Ignore large audio files except sample
+*.wav
+!samples/sample.wav
+
+# Ignore system files
+.DS_Store
