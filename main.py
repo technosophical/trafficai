@@ -1,5 +1,3 @@
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import FileResponse, JSONResponse
 import shutil
 import os
 import uuid
@@ -7,7 +5,18 @@ import librosa
 import numpy as np
 import pandas as pd
 
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://technosophical.github.io"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 UPLOAD_FOLDER = "uploads"
 PROCESSED_FOLDER = "processed"
