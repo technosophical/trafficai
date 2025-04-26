@@ -1,6 +1,3 @@
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import FileResponse, JSONResponse
 import shutil
 import os
 import uuid
@@ -8,7 +5,12 @@ import librosa
 import numpy as np
 import pandas as pd
 
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import FileResponse, JSONResponse
+
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://technosophical.github.io"],  # Only allow your frontend
