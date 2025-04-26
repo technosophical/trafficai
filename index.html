@@ -2,30 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TrafficAI - Upload Audio</title>
+  <title>🚦 TrafficAI - Upload Portal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <style>
-    body { font-family: sans-serif; margin: 40px; text-align: center; }
+    body { padding: 40px; }
+    .container { max-width: 600px; margin: auto; text-align: center; }
     #result { margin-top: 20px; }
+    #progress { display: none; margin-top: 20px; }
   </style>
 </head>
 <body>
 
-<h1>🚦 TrafficAI Upload Portal 🚦</h1>
+<section class="section">
+  <div class="container">
+    <h1 class="title is-3">🚦 TrafficAI Upload Portal</h1>
 
-<input type="file" id="fileInput" accept=".wav" />
-<br><br>
-<button onclick="uploadAudio()">Upload and Process</button>
+    <div class="file is-primary is-centered">
+      <label class="file-label">
+        <input class="file-input" type="file" id="fileInput" accept=".wav">
+        <span class="file-cta">
+          <span class="file-icon">
+            📁
+          </span>
+          <span class="file-label">
+            Choose a WAV file...
+          </span>
+        </span>
+      </label>
+    </div>
 
-<div id="result"></div>
+    <br>
+    <button class="button is-primary is-medium" onclick="uploadAudio()">Upload and Process</button>
+
+    <progress id="progress" class="progress is-success" value="0" max="100"></progress>
+
+    <div id="result"></div>
+
+  </div>
+</section>
 
 <script>
 async function uploadAudio() {
   const fileInput = document.getElementById('fileInput');
   const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = 'Loading...';
+  const progressBar = document.getElementById('progress');
+
+  resultDiv.innerHTML = '';
+  progressBar.style.display = 'block';
+  progressBar.value = 0;
 
   if (fileInput.files.length === 0) {
-    resultDiv.innerHTML = 'Please select a WAV file!';
+    resultDiv.innerHTML = '<p class="has-text-danger">Please select a WAV file!</p>';
+    progressBar.style.display = 'none';
     return;
   }
 
@@ -34,31 +62,38 @@ async function uploadAudio() {
 
   try {
     // Step 1: Upload the file
+    progressBar.value = 20;
     const uploadResponse = await fetch('https://trafficai-1.onrender.com/upload', {
       method: 'POST',
       body: formData
     });
 
+    progressBar.value = 50;
     const uploadData = await uploadResponse.json();
     const sessionId = uploadData.session_id;
 
     // Step 2: Fetch the results
+    progressBar.value = 70;
     const resultsResponse = await fetch(`https://trafficai-1.onrender.com/results/${sessionId}`);
     const resultsData = await resultsResponse.json();
 
+    progressBar.value = 100;
+    setTimeout(() => { progressBar.style.display = 'none'; }, 500);
+
     if (resultsData.error) {
-      resultDiv.innerHTML = `Error: ${resultsData.error}`;
+      resultDiv.innerHTML = `<p class="has-text-danger">Error: ${resultsData.error}</p>`;
     } else {
       resultDiv.innerHTML = `
-        <h3>✅ ${resultsData.vehicles_detected} Vehicles Detected</h3>
-        <a href="https://trafficai-1.onrender.com/download_csv/${sessionId}" target="_blank">
+        <h2 class="title is-4">✅ ${resultsData.vehicles_detected} Vehicles Detected</h2>
+        <a href="https://trafficai-1.onrender.com/download_csv/${sessionId}" target="_blank" class="button is-link is-light">
           Download CSV Results
         </a>
       `;
     }
   } catch (error) {
     console.error(error);
-    resultDiv.innerHTML = '❌ An error occurred during upload or processing.';
+    resultDiv.innerHTML = '<p class="has-text-danger">❌ An error occurred during upload or processing.</p>';
+    progressBar.style.display = 'none';
   }
 }
 </script>
