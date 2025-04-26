@@ -49,8 +49,6 @@
             border-radius: 10px;
             margin-top: 30px;
         }
-<<<<<<< Updated upstream
-=======
         #error {
             background-color: #ffcccc;
             color: red;
@@ -59,7 +57,6 @@
             margin-top: 20px;
             text-align: center;
         }
->>>>>>> Stashed changes
     </style>
 </head>
 <body>
@@ -77,41 +74,25 @@
     </div>
 </div>
 
-<<<<<<< Updated upstream
-=======
 <div id="error" style="display:none;"></div>
 
->>>>>>> Stashed changes
 <div id="results"></div>
 
 <script>
 const API_BASE = "https://trafficai-1.onrender.com";
 
 async function uploadAudio() {
-<<<<<<< Updated upstream
-=======
     clearError();
->>>>>>> Stashed changes
     const fileInput = document.getElementById('audioFile');
     const file = fileInput.files[0];
     
     if (!file) {
-<<<<<<< Updated upstream
-        alert("Please select a file first.");
-        return;
-    }
-
-    // Validate file size under 200MB
-    if (file.size > 200 * 1024 * 1024) {
-        alert("File too large! Maximum allowed size is 200MB.");
-=======
         showError("Please select a file first.");
         return;
     }
 
     if (file.size > 200 * 1024 * 1024) {
         showError("File too large! Maximum allowed size is 200MB.");
->>>>>>> Stashed changes
         return;
     }
 
@@ -133,29 +114,18 @@ async function uploadAudio() {
         if (data.session_id) {
             await fetchResults(data.session_id);
         } else {
-<<<<<<< Updated upstream
-            throw new Error("Upload failed.");
-        }
-    } catch (error) {
-        console.error(error);
-        alert("An error occurred during upload or processing.");
-=======
             showError("Upload failed. Please try again.");
         }
     } catch (error) {
         console.error(error);
         showError("An error occurred during upload or processing.");
->>>>>>> Stashed changes
     }
 
     document.getElementById('progressFill').style.width = "100%";
 }
 
 async function useSample() {
-<<<<<<< Updated upstream
-=======
     clearError();
->>>>>>> Stashed changes
     document.getElementById('progressBar').style.display = "block";
     document.getElementById('progressFill').style.width = "30%";
 
@@ -166,19 +136,11 @@ async function useSample() {
             document.getElementById('progressFill').style.width = "60%";
             await fetchResults(data.session_id);
         } else {
-<<<<<<< Updated upstream
-            throw new Error("Sample processing failed.");
-        }
-    } catch (error) {
-        console.error(error);
-        alert("An error occurred using the sample.");
-=======
             showError("Sample processing failed. Please try again.");
         }
     } catch (error) {
         console.error(error);
         showError("An error occurred using the sample file.");
->>>>>>> Stashed changes
     }
 
     document.getElementById('progressFill').style.width = "100%";
@@ -193,17 +155,6 @@ async function fetchResults(sessionId) {
         const data = await response.json();
 
         if (data.error) {
-<<<<<<< Updated upstream
-            resultsDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
-            return;
-        }
-
-        resultsDiv.innerHTML = `
-            <h2>Results</h2>
-            <p><strong>Vehicles Detected:</strong> ${data.vehicles_detected}</p>
-            <h3>Timestamps (seconds):</h3>
-            <ul>${data.timestamps_sec.map(t => `<li>${t.toFixed(1)} sec</li>`).join('')}</ul>
-=======
             showError(data.error);
             return;
         }
@@ -221,18 +172,12 @@ async function fetchResults(sessionId) {
             <p><strong>Total Time of Recording:</strong> ${totalTimeSeconds.toFixed(1)} seconds</p>
             <p><strong>Vehicles per Minute:</strong> ${vehiclesPerMinute}</p>
 
->>>>>>> Stashed changes
             <a href="${API_BASE}/download_csv/${sessionId}" target="_blank">
                 <button>Download Full CSV</button>
             </a>
         `;
     } catch (error) {
         console.error(error);
-<<<<<<< Updated upstream
-        resultsDiv.innerHTML = `<p style="color:red;">Failed to fetch results.</p>`;
-    }
-}
-=======
         showError("Failed to fetch results. Please try again.");
     }
 }
@@ -248,7 +193,6 @@ function clearError() {
     errorDiv.innerText = "";
     errorDiv.style.display = "none";
 }
->>>>>>> Stashed changes
 </script>
 
 </body>
