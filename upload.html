@@ -164,7 +164,6 @@
     <p style="margin-top: 15px;">Processing your recording...</p>
 </div>
 
-
     <div id="result"></div>
 </section>
 
@@ -202,8 +201,6 @@ async function uploadAudio() {
         method: "POST",
         body: formData
     });
-
-    document.getElementById('progressBar').style.width = '100%';
 
     const data = await uploadResponse.json();
     if (data.session_id) {
