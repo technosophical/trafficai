@@ -1,6 +1,3 @@
-from fastapi import FastAPI, UploadFile, File
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
 import shutil
 import os
 import uuid
@@ -9,13 +6,17 @@ import librosa
 import numpy as np
 import pandas as pd
 
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse
+
 # App setup
 app = FastAPI()
 
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://technosophical.github.io"],  # Your frontend URL
+    allow_origins=["*"],  # Your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -114,3 +115,33 @@ async def download_csv(session_id: str):
 async def list_processed_files():
     """(Debug) List all processed session files."""
     return os.listdir(PROCESSED_FOLDER)
+
+from fastapi import HTTPException
+import os
+import requests
+import uuid
+
+@app.get("/process_sample")
+async def process_sample():
+    session_id = f"sample-{uuid.uuid4()}"
+    uploads_dir = "uploads"
+    os.makedirs(uploads_dir, exist_ok=True)  # Make sure uploads folder exists
+
+    sample_file_path = os.path.join(uploads_dir, "sample.wav")
+
+    # If the sample doesn't exist locally, download it from GitHub
+    if not os.path.exists(sample_file_path):
+        try:
+            sample_url = "https://raw.githubusercontent.com/technosophical/trafficai/main/samples/sample.wav"
+            print(f"Sample file not found locally. Downloading from {sample_url}...")
+            response = requests.get(sample_url)
+            response.raise_for_status()
+            with open(sample_file_path, "wb") as f:
+                f.write(response.content)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to download sample file: {str(e)}")
+
+    # Process the local sample file
+    simple_vehicle_detection(sample_file_path, session_id)
+    return {"session_id": session_id, "status": "processing complete (sample)"}
+
