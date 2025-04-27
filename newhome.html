@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ecoustics | Listening to the Land</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #FAF3E0;
+            color: #333;
+        }
+        header, section, footer {
+            padding: 60px 20px;
+            max-width: 1100px;
+            margin: auto;
+        }
+        header {
+            text-align: center;
+            background: linear-gradient(180deg, #B3E5FC 0%, #FAF3E0 100%);
+            padding-top: 80px;
+            padding-bottom: 80px;
+            border-bottom: 2px solid #2E7D32;
+        }
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: #2E7D32;
+        }
+        header p {
+            font-size: 1.3rem;
+            color: #555;
+        }
+        .video-placeholder {
+            width: 100%;
+            height: 320px;
+            background: #B3E5FC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #2E7D32;
+            margin-bottom: 30px;
+            border-radius: 12px;
+        }
+        section h2 {
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+            color: #2E7D32;
+        }
+        section ul {
+            list-style: none;
+            padding: 0;
+        }
+        section ul li {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+        .features-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .feature-card {
+            flex: 1 1 45%;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 16px;
+            text-align: center;
+        }
+        .comparison-table th {
+            background: #B3E5FC;
+            font-weight: 600;
+        }
+        .cta-buttons {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .cta-buttons a button {
+            margin: 20px auto;
+            padding: 18px 36px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            background: #2E7D32;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .cta-buttons a button:hover {
+            background: #1B5E20;
+            transform: scale(1.05);
+        }
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #8D6E63;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Hero Section -->
+<header>
+    <div class="video-placeholder">
+        [Animated Video Coming Soon]
+    </div>
+    <h1>AI-Powered Traffic Monitoring for Rural New Zealand</h1>
+    <p>Simple sound recordings. Powerful environmental insights.</p>
+</header>
+
+
+<!-- Product Overview -->
+<<section>
+    <h2>Turning Sound into Actionable Traffic Data</h2>
+    <p>
+        Ecoustics transforms everyday audio recordings into valuable traffic monitoring and environmental data.
+        Using advanced AI, we detect vehicles, wildlife activity, and land health changes — all through passive acoustic sensing.
+    </p>
+    <p>
+        Designed for rural roads, conservation areas, and remote environments across New Zealand, Ecoustics delivers fast, affordable, and non-invasive data collection without the need for expensive hardware or site disruptions.
+    </p>
+    <ul>
+        <li>📱 Works with smartphones or simple recorders</li>
+        <li>🚜 Ideal for rural traffic monitoring and land management</li>
+        <li>📈 Fast cloud-based analysis and CSV reporting</li>
+        <li>🌱 Eco-friendly: no ground disturbance or power needs</li>
+    </ul>
+</section>
+
+
+<!-- Core Features -->
+<section>
+    <h2>Why Choose Ecoustics for Traffic Monitoring?</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            🎤 <strong>Simple Data Capture</strong><br>
+            Record ambient sound from rural roads or trails using any standard device — no specialized hardware required.
+        </div>
+        <div class="feature-card">
+            🔍 <strong>AI Vehicle Detection</strong><br>
+            Automatically detect passing cars, trucks, and bikes with high-accuracy machine learning models.
+        </div>
+        <div class="feature-card">
+            📊 <strong>Instant Reporting</strong><br>
+            Receive vehicle counts, movement patterns, and CSV downloads — ready for rural transport studies and consent applications.
+        </div>
+        <div class="feature-card">
+            🌿 <strong>Minimal Footprint</strong><br>
+            Monitor traffic and ecosystems without disturbing habitats, fencing, or roading infrastructure.
+        </div>
+    </div>
+</section>
+
+
+<!-- Comparison Table -->
+<section>
+    <h2>Smarter Traffic Monitoring for Rural New Zealand</h2>
+    <p>
+        Traditional traffic counting equipment is expensive, invasive, and often impractical for remote areas.
+        Ecoustics offers a faster, more flexible solution for today's rural planners and land managers.
+    </p>
+
+    <table class="comparison-table">
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Cost</th>
+                <th>Setup Effort</th>
+                <th>Environmental Impact</th>
+                <th>Data Richness</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Traditional Traffic Counters</td>
+                <td>High</td>
+                <td>Professional Installation</td>
+                <td>Moderate Disturbance</td>
+                <td>Vehicle counts only</td>
+            </tr>
+            <tr>
+                <td>Manual Surveys</td>
+                <td>Very High</td>
+                <td>Labour Intensive</td>
+                <td>Potential Habitat Disturbance</td>
+                <td>Limited temporal coverage</td>
+            </tr>
+            <tr>
+                <td><strong>Ecoustics</strong></td>
+                <td><strong>Low</strong></td>
+                <td><strong>DIY Easy Setup</strong></td>
+                <td><strong>No Disturbance</strong></td>
+                <td><strong>Traffic, Wildlife, Environmental Soundscape</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+<!-- Single Call-to-Action Section -->
+<section class="cta-buttons">
+    <h2>See Ecoustics in Action</h2>
+    <p>Upload a recording and experience fast, accurate AI traffic monitoring built for New Zealand’s rural roads and land environments.</p>
+    <a href="upload.html">
+        <button>See It in Action</button>
+    </a>
+</section>
+
+
+<!-- Footer -->
+<footer>
+    &copy; 2025 Ecoustics. Listening to the Land.
+</footer>
+
+
+</body>
+</html>
