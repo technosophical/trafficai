@@ -96,6 +96,45 @@
             color: #8D6E63;
             margin-top: 60px;
         }
+
+        /* Soundwave Animation */
+#waveAnimation {
+    display: none;
+    margin-top: 30px;
+    text-align: center;
+}
+
+#waveAnimation .wave {
+    display: inline-block;
+    width: 6px;
+    height: 20px;
+    margin: 0 3px;
+    background: #2E7D32;
+    animation: wave 1.2s infinite ease-in-out;
+}
+
+#waveAnimation .wave:nth-child(2) {
+    animation-delay: -1.1s;
+}
+#waveAnimation .wave:nth-child(3) {
+    animation-delay: -1.0s;
+}
+#waveAnimation .wave:nth-child(4) {
+    animation-delay: -0.9s;
+}
+#waveAnimation .wave:nth-child(5) {
+    animation-delay: -0.8s;
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: scaleY(0.4);
+    }
+    50% {
+        transform: scaleY(1.0);
+    }
+}
+
     </style>
 </head>
 
@@ -116,9 +155,15 @@
     <br>
     <button onclick="useSample()">Try a Sample</button>
 
-    <div id="progressBarContainer">
-        <div id="progressBar"></div>
-    </div>
+<div id="waveAnimation">
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <p style="margin-top: 15px;">Processing your recording...</p>
+</div>
+
 
     <div id="result"></div>
 </section>
@@ -149,9 +194,9 @@ async function uploadAudio() {
     const formData = new FormData();
     formData.append("audio_file", file);
 
-    // Show progress bar
-    document.getElementById('progressBarContainer').style.display = 'block';
-    document.getElementById('progressBar').style.width = '0%';
+    // Show wave animation
+    document.getElementById('waveAnimation').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
 
     const uploadResponse = await fetch(`${API_BASE}/upload`, {
         method: "POST",
