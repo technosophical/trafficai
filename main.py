@@ -16,7 +16,7 @@ app = FastAPI()
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://technosophical.github.io"],  # Your frontend URL
+    allow_origins=["*"],  # Your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
