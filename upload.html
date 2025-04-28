@@ -1,119 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Upload | Ecoustics</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Upload | Ecoustics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <script src="https://apis.google.com/js/api.js"></script>
-  <script>
-    const API_BASE = "https://trafficai-1.onrender.com"; 
-    const GOOGLE_CLIENT_ID = '380466288422-2smvpbn9f0h5ka4omjrmfdpg19ovvdts.apps.googleusercontent.com'; 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    let pickerApiLoaded = false;
-    let oauthToken = '';
+    <script src="https://apis.google.com/js/api.js"></script>
 
-    function loadPicker() {
-      gapi.load('auth2', () => {
-        gapi.auth2.init({
-          client_id: GOOGLE_CLIENT_ID
-        }).then(authInstance => {
-          authInstance.signIn().then(user => {
-            oauthToken = user.getAuthResponse().access_token;
-            createPicker();
-          });
-        });
-      });
-    }
+    <style>
+        /* --- Styling (same as your nice pre-Google version) --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #FAF3E0;
+            color: #333;
+        }
+        header, section, footer {
+            padding: 60px 20px;
+            max-width: 700px;
+            margin: auto;
+        }
+        header {
+            text-align: center;
+            background: linear-gradient(180deg, #B3E5FC 0%, #FAF3E0 100%);
+            padding-top: 60px;
+            padding-bottom: 40px;
+            border-bottom: 2px solid #2E7D32;
+        }
+        header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            color: #2E7D32;
+        }
+        header p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+        .upload-form {
+            background: white;
+            padding: 30px;
+            margin-top: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .upload-form input[type="file"] {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .upload-form button {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: #2E7D32;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .upload-form button:hover {
+            background: #1B5E20;
+            transform: scale(1.05);
+        }
+        #waveAnimation {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+        #waveAnimation .wave {
+            display: inline-block;
+            width: 6px;
+            height: 20px;
+            margin: 0 3px;
+            background: #2E7D32;
+            animation: wave 1.2s infinite ease-in-out;
+        }
+        #waveAnimation .wave:nth-child(2) { animation-delay: -1.1s; }
+        #waveAnimation .wave:nth-child(3) { animation-delay: -1.0s; }
+        #waveAnimation .wave:nth-child(4) { animation-delay: -0.9s; }
+        #waveAnimation .wave:nth-child(5) { animation-delay: -0.8s; }
 
-    function createPicker() {
-      gapi.load('picker', {'callback': onPickerApiLoad});
-    }
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.4); }
+            50% { transform: scaleY(1.0); }
+        }
 
-    function onPickerApiLoad() {
-      pickerApiLoaded = true;
-      if (pickerApiLoaded && oauthToken) {
-        const picker = new google.picker.PickerBuilder()
-          .addView(google.picker.ViewId.DOCS)
-          .setOAuthToken(oauthToken)
-          .setDeveloperKey('AIzaSy...')  <!-- (Optional: real API Key here for better stability but can omit) -->
-          .setCallback(pickerCallback)
-          .build();
-        picker.setVisible(true);
-      }
-    }
-
-    function pickerCallback(data) {
-      if (data.action === google.picker.Action.PICKED) {
-        const fileId = data.docs[0].id;
-        const downloadUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
-
-        alert('✅ File selected from Google Drive. (Integration pending file handling.)');
-        // Future: fetch file content and pass to API
-      }
-    }
-
-    async function uploadAudio() {
-      const fileInput = document.getElementById('audioFile');
-      const file = fileInput.files[0];
-
-      if (!file) {
-        alert("Please select a file first.");
-        return;
-      }
-      if (file.size > 200 * 1024 * 1024) {
-        alert("File too large! Max 200MB.");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("audio_file", file);
-
-      const uploadResponse = await fetch(`${API_BASE}/upload`, {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await uploadResponse.json();
-      if (data.session_id) {
-        const resultsResponse = await fetch(`${API_BASE}/results/${data.session_id}`);
-        const resultsData = await resultsResponse.json();
-
-        alert(`✅ Upload done. Detected vehicles: ${resultsData.timestamps_sec.length}`);
-      } else {
-        alert("Upload failed.");
-      }
-    }
-
-    async function useSample() {
-      const response = await fetch(`${API_BASE}/process_sample`);
-      const data = await response.json();
-      if (data.session_id) {
-        const resultsResponse = await fetch(`${API_BASE}/results/${data.session_id}`);
-        const resultsData = await resultsResponse.json();
-
-        alert(`✅ Sample done. Detected vehicles: ${resultsData.timestamps_sec.length}`);
-      } else {
-        alert("Sample processing failed.");
-      }
-    }
-  </script>
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #E8F5E9;
+            border-radius: 10px;
+            display: none;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #8D6E63;
+            margin-top: 60px;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>Upload your recording</h1>
+<!-- Header -->
+<header>
+    <h1>Upload Your Recording</h1>
+    <p>Turn sound into insight with Ecoustics.</p>
+</header>
 
-<h2>Option 1: Upload manually</h2>
-<input type="file" id="audioFile">
-<br><br>
-<button onclick="uploadAudio()">Upload Audio</button>
+<!-- Upload Form -->
+<section class="upload-form">
+    <h2>Select an Audio File</h2>
+    <input type="file" id="audioFile">
+    <br>
+    <button onclick="uploadAudio()">Analyze Audio</button>
+    <br>
+    <button onclick="useSample()">Try a Sample</button>
+    <br>
+    <button onclick="openGooglePicker()">Pick from Google Drive</button>
 
-<h2>Option 2: Try sample</h2>
-<button onclick="useSample()">Try Sample</button>
+    <div id="waveAnimation">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <p style="margin-top: 15px;">Processing your recording...</p>
+    </div>
 
-<h2>Option 3: Upload from Google Drive</h2>
-<button onclick="loadPicker()">Select from Google Drive</button>
+    <div id="result"></div>
+</section>
+
+<!-- Footer -->
+<footer>
+    &copy; 2025 Ecoustics. All rights reserved.
+</footer>
+
+<script>
+const API_BASE = "https://trafficai-1.onrender.com";
+const GOOGLE_CLIENT_ID = "380466288422-2smvpbn9f0h5ka4omjrmfdpg19ovvdts.apps.googleusercontent.com";
+
+async function uploadAudio(file) {
+    if (!file) {
+        file = document.getElementById('audioFile').files[0];
+    }
+    if (!file) {
+        alert("Please select a file first.");
+        return;
+    }
+    if (file.size > 200 * 1024 * 1024) {
+        alert("File too large! Max 200MB.");
+        return;
+    }
+
+    document.getElementById('waveAnimation').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+
+    const formData = new FormData();
+    formData.append("audio_file", file);
+
+    try {
+        const uploadResponse = await fetch(`${API_BASE}/upload`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await uploadResponse.json();
+        if (data.session_id) {
+            const resultsResponse = await fetch(`${API_BASE}/results/${data.session_id}`);
+            const resultsData = await resultsResponse.json();
+
+            const numberVehicles = resultsData.timestamps_sec.length;
+            const totalTimeSeconds = numberVehicles > 0 ? Math.max(...resultsData.timestamps_sec) : 0;
+            const totalTimeMinutes = totalTimeSeconds / 60;
+            const vehiclesPerMinute = totalTimeMinutes > 0 ? (numberVehicles / totalTimeMinutes).toFixed(2) : "N/A";
+
+            document.getElementById('waveAnimation').style.display = 'none';
+            document.getElementById('result').style.display = "block";
+            document.getElementById('result').innerHTML = `
+                <h3>Results:</h3>
+                <p><strong>Number of Vehicles:</strong> ${numberVehicles}</p>
+                <p><strong>Total Time:</strong> ${totalTimeSeconds.toFixed(1)} seconds</p>
+                <p><strong>Vehicles per Minute:</strong> ${vehiclesPerMinute}</p>
+                <a href="${API_BASE}/download_csv/${data.session_id}" target="_blank">
+                    <button style="margin-top:15px;">Download Full CSV</button>
+                </a>
+            `;
+        } else {
+            alert("Upload failed. Please try again.");
+            document.getElementById('waveAnimation').style.display = 'none';
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error during upload.");
+        document.getElementById('waveAnimation').style.display = 'none';
+    }
+}
+
+async function useSample() {
+    try {
+        document.getElementById('waveAnimation').style.display = 'block';
+        const response = await fetch(`${API_BASE}/process_sample`);
+        const data = await response.json();
+
+        if (data.session_id) {
+            const resultsResponse = await fetch(`${API_BASE}/results/${data.session_id}`);
+            const resultsData = await resultsResponse.json();
+
+            const numberVehicles = resultsData.timestamps_sec.length;
+            const totalTimeSeconds = numberVehicles > 0 ? Math.max(...resultsData.timestamps_sec) : 0;
+            const totalTimeMinutes = totalTimeSeconds / 60;
+            const vehiclesPerMinute = totalTimeMinutes > 0 ? (numberVehicles / totalTimeMinutes).toFixed(2) : "N/A";
+
+            document.getElementById('waveAnimation').style.display = 'none';
+            document.getElementById('result').style.display = "block";
+            document.getElementById('result').innerHTML = `
+                <h3>Sample Results:</h3>
+                <p><strong>Number of Vehicles:</strong> ${numberVehicles}</p>
+                <p><strong>Total Time:</strong> ${totalTimeSeconds.toFixed(1)} seconds</p>
+                <p><strong>Vehicles per Minute:</strong> ${vehiclesPerMinute}</p>
+            `;
+        } else {
+            alert("Sample processing failed.");
+            document.getElementById('waveAnimation').style.display = 'none';
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error loading sample.");
+        document.getElementById('waveAnimation').style.display = 'none';
+    }
+}
+
+// Google Drive Picker
+function openGooglePicker() {
+    gapi.load('picker', { 'callback': createPicker });
+}
+
+function createPicker() {
+    const picker = new google.picker.PickerBuilder()
+        .setAppId(GOOGLE_CLIENT_ID)
+        .addView(google.picker.ViewId.DOCS)
+        .setOAuthToken(gapi.auth.getToken().access_token)
+        .setDeveloperKey(GOOGLE_CLIENT_ID)
+        .setCallback(pickerCallback)
+        .build();
+    picker.setVisible(true);
+}
+
+function pickerCallback(data) {
+    if (data.action === google.picker.Action.PICKED) {
+        const fileId = data.docs[0].id;
+        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+            headers: { Authorization: "Bearer " + gapi.auth.getToken().access_token }
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const file = new File([blob], "uploaded_audio.wav", { type: "audio/wav" });
+            uploadAudio(file);
+        });
+    }
+}
+</script>
 
 </body>
 </html>
