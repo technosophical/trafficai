@@ -1,277 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Upload | Ecoustics</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #FAF3E0;
-      color: #333;
-    }
-    header, section, footer {
-      padding: 60px 20px;
-      max-width: 700px;
-      margin: auto;
-    }
-    header {
-      text-align: center;
-      background: linear-gradient(180deg, #B3E5FC 0%, #FAF3E0 100%);
-      padding-top: 60px;
-      padding-bottom: 40px;
-      border-bottom: 2px solid #2E7D32;
-    }
-    header h1 {
-      font-size: 2.4rem;
-      margin-bottom: 10px;
-      color: #2E7D32;
-    }
-    header p {
-      font-size: 1.2rem;
-      color: #555;
-    }
-    .upload-form {
-      background: white;
-      padding: 30px;
-      margin-top: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    .upload-form input[type="file"] {
-      margin: 20px 0;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      width: 100%;
-    }
-    .upload-form button {
-      margin-top: 10px;
-      margin-bottom: 10px;
-      padding: 15px 30px;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      background: #2E7D32;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
-    .upload-form button:hover {
-      background: #1B5E20;
-      transform: scale(1.05);
-    }
-    #waveAnimation {
-      display: none;
-      margin-top: 30px;
-      text-align: center;
-    }
-    #waveAnimation .wave {
-      display: inline-block;
-      width: 6px;
-      height: 20px;
-      margin: 0 3px;
-      background: #2E7D32;
-      animation: wave 1.2s infinite ease-in-out;
-    }
-    #waveAnimation .wave:nth-child(2) { animation-delay: -1.1s; }
-    #waveAnimation .wave:nth-child(3) { animation-delay: -1.0s; }
-    #waveAnimation .wave:nth-child(4) { animation-delay: -0.9s; }
-    #waveAnimation .wave:nth-child(5) { animation-delay: -0.8s; }
-    @keyframes wave {
-      0%, 100% { transform: scaleY(0.4); }
-      50% { transform: scaleY(1.0); }
-    }
-    #result {
-      margin-top: 30px;
-      padding: 20px;
-      background: #E8F5E9;
-      border-radius: 10px;
-      display: none;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #8D6E63;
-      margin-top: 60px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Upload | Ecoustics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #FAF3E0;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            text-align: center;
+            background: linear-gradient(180deg, #B3E5FC 0%, #FAF3E0 100%);
+            padding: 60px 20px 40px;
+            border-bottom: 2px solid #2E7D32;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            color: #2E7D32;
+        }
+        section {
+            padding: 40px 20px;
+            max-width: 700px;
+            margin: auto;
+        }
+        .upload-form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .upload-form input[type="file"] {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+        }
+        .upload-form button {
+            margin-top: 15px;
+            padding: 14px 30px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: #2E7D32;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .upload-form button:hover {
+            background: #1B5E20;
+            transform: scale(1.05);
+        }
+        #waveAnimation {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+        #waveAnimation .wave {
+            display: inline-block;
+            width: 6px;
+            height: 20px;
+            margin: 0 3px;
+            background: #2E7D32;
+            animation: wave 1.2s infinite ease-in-out;
+        }
+        #waveAnimation .wave:nth-child(2) { animation-delay: -1.1s; }
+        #waveAnimation .wave:nth-child(3) { animation-delay: -1.0s; }
+        #waveAnimation .wave:nth-child(4) { animation-delay: -0.9s; }
+        #waveAnimation .wave:nth-child(5) { animation-delay: -0.8s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.4); }
+            50% { transform: scaleY(1.0); }
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #E8F5E9;
+            border-radius: 10px;
+            display: none;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #8D6E63;
+            margin: 50px 0 20px;
+        }
+    </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Upload Your Recording</h1>
-  <p>Turn sound into insight with Ecoustics.</p>
+    <h1>Upload Your Recording</h1>
+    <p>Turn sound into insight with Ecoustics.</p>
 </header>
 
 <section class="upload-form">
-  <h2>Select an Audio File</h2>
-  <input type="file" id="audioFile">
-  <br>
-  <button onclick="uploadAudio()">Analyze Uploaded Audio</button>
-  <br>
-  <button onclick="useSample()">Try a Sample</button>
-  <br>
-  <button onclick="openGooglePicker()">Select from Google Drive</button>
+    <h2>Select an Audio File</h2>
 
-  <div id="waveAnimation">
-    <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
-    <p style="margin-top: 15px;">Processing your recording...</p>
-  </div>
+    <input type="file" id="audioFile"><br>
 
-  <div id="result"></div>
+    <button onclick="uploadAudio()">Analyze Audio</button><br>
+    <button onclick="useSample()">Try a Sample</button><br>
+    <button onclick="openGooglePicker()">Pick from Google Drive</button>
+
+    <div id="waveAnimation">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <p style="margin-top: 15px;">Processing your recording...</p>
+    </div>
+
+    <div id="result"></div>
 </section>
 
 <footer>
-  &copy; 2025 Ecoustics. All rights reserved.
+    &copy; 2025 Ecoustics. All rights reserved.
 </footer>
-
-<!-- Google APIs -->
-<script src="https://apis.google.com/js/api.js"></script>
 
 <script>
 const API_BASE = "https://trafficai-1.onrender.com";
+
+// Google Auth constants
 const GOOGLE_CLIENT_ID = "380466288422-2smvpbn9f0h5ka4omjrmfdpg19ovvdts.apps.googleusercontent.com";
 const GOOGLE_API_KEY = "AIzaSyDSZDWXoe4F5CqwFOq6FsIbpvOed2P1E8c";
 
-async function uploadAudio(file = null) {
-  const fileInput = document.getElementById('audioFile');
-  file = file || fileInput.files[0];
+// Upload from manual file input
+async function uploadAudio() {
+    const fileInput = document.getElementById('audioFile');
+    const file = fileInput.files[0];
 
-  if (!file) {
-    alert("Please select a file first.");
-    return;
-  }
+    if (!file) {
+        alert("Please select a file first.");
+        return;
+    }
 
-  if (file.size > 200 * 1024 * 1024) {
-    alert("File too large! Maximum allowed size is 200MB.");
-    return;
-  }
+    if (file.size > 200 * 1024 * 1024) {
+        alert("File too large! Max 200MB.");
+        return;
+    }
 
-  document.getElementById('waveAnimation').style.display = 'block';
-  document.getElementById('result').style.display = 'none';
+    const formData = new FormData();
+    formData.append("audio_file", file);
 
-  const formData = new FormData();
-  formData.append("audio_file", file);
+    document.getElementById('waveAnimation').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
 
-  try {
-    const uploadResponse = await fetch(`${API_BASE}/upload`, { method: "POST", body: formData });
+    const uploadResponse = await fetch(`${API_BASE}/upload`, {
+        method: "POST",
+        body: formData
+    });
+
     const data = await uploadResponse.json();
     if (data.session_id) {
-      const resultsResponse = await fetch(`${API_BASE}/results/${data.session_id}`);
-      const resultsData = await resultsResponse.json();
-
-      const numberVehicles = resultsData.timestamps_sec.length;
-      const totalTimeSeconds = resultsData.timestamps_sec.length > 0 ? Math.max(...resultsData.timestamps_sec) : 0;
-      const totalTimeMinutes = totalTimeSeconds / 60;
-      const vehiclesPerMinute = totalTimeMinutes > 0 ? (numberVehicles / totalTimeMinutes).toFixed(2) : "N/A";
-
-      document.getElementById('waveAnimation').style.display = 'none';
-      document.getElementById('result').style.display = "block";
-      document.getElementById('result').innerHTML = `
-        <h3>Results:</h3>
-        <p><strong>Number of Vehicles:</strong> ${numberVehicles}</p>
-        <p><strong>Total Time of Recording:</strong> ${totalTimeSeconds.toFixed(1)} seconds</p>
-        <p><strong>Vehicles per Minute:</strong> ${vehiclesPerMinute}</p>
-        <a href="${API_BASE}/download_csv/${data.session_id}" target="_blank">
-          <button style="margin-top:15px;">Download Full CSV</button>
-        </a>
-      `;
+        await showResults(data.session_id);
     } else {
-      throw new Error("Upload failed.");
+        alert("Upload failed.");
     }
-  } catch (error) {
-    console.error(error);
-    document.getElementById('waveAnimation').style.display = 'none';
-    alert("An error occurred. Please try again.");
-  }
 }
 
+// Use the built-in sample
 async function useSample() {
-  document.getElementById('waveAnimation').style.display = 'block';
-  document.getElementById('result').style.display = 'none';
-  try {
+    document.getElementById('waveAnimation').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+
     const response = await fetch(`${API_BASE}/process_sample`);
     const data = await response.json();
     if (data.session_id) {
-      const resultsResponse = await fetch(`${API_BASE}/results/${data.session_id}`);
-      const resultsData = await resultsResponse.json();
-
-      const numberVehicles = resultsData.timestamps_sec.length;
-      const totalTimeSeconds = resultsData.timestamps_sec.length > 0 ? Math.max(...resultsData.timestamps_sec) : 0;
-      const totalTimeMinutes = totalTimeSeconds / 60;
-      const vehiclesPerMinute = totalTimeMinutes > 0 ? (numberVehicles / totalTimeMinutes).toFixed(2) : "N/A";
-
-      document.getElementById('waveAnimation').style.display = 'none';
-      document.getElementById('result').style.display = "block";
-      document.getElementById('result').innerHTML = `
-        <h3>Sample Results:</h3>
-        <p><strong>Number of Vehicles:</strong> ${numberVehicles}</p>
-        <p><strong>Total Time of Recording:</strong> ${totalTimeSeconds.toFixed(1)} seconds</p>
-        <p><strong>Vehicles per Minute:</strong> ${vehiclesPerMinute}</p>
-      `;
+        await showResults(data.session_id);
     } else {
-      throw new Error("Sample processing failed.");
+        alert("Sample processing failed.");
     }
-  } catch (error) {
-    console.error(error);
-    document.getElementById('waveAnimation').style.display = 'none';
-    alert("An error occurred. Please try again.");
-  }
 }
 
-// GOOGLE AUTH
+// Display results
+async function showResults(session_id) {
+    const resultsResponse = await fetch(`${API_BASE}/results/${session_id}`);
+    const resultsData = await resultsResponse.json();
 
+    const numberVehicles = resultsData.timestamps_sec.length;
+    const totalTimeSeconds = numberVehicles > 0 ? Math.max(...resultsData.timestamps_sec) : 0;
+    const totalTimeMinutes = totalTimeSeconds / 60;
+    const vehiclesPerMinute = totalTimeMinutes > 0 ? (numberVehicles / totalTimeMinutes).toFixed(2) : "N/A";
+
+    document.getElementById('waveAnimation').style.display = 'none';
+    document.getElementById('result').style.display = "block";
+    document.getElementById('result').innerHTML = `
+        <h3>Results:</h3>
+        <p><strong>Number of Vehicles:</strong> ${numberVehicles}</p>
+        <p><strong>Total Time:</strong> ${totalTimeSeconds.toFixed(1)} sec</p>
+        <p><strong>Vehicles per Minute:</strong> ${vehiclesPerMinute}</p>
+        <a href="${API_BASE}/download_csv/${session_id}" target="_blank">
+            <button style="margin-top:15px;">Download CSV</button>
+        </a>
+    `;
+}
+
+// Google Picker integration
 function openGooglePicker() {
-  gapi.load('client:picker', {
-    callback: async () => {
-      await gapi.client.init({ apiKey: GOOGLE_API_KEY });
-      const token = gapi.client.getToken();
-      if (!token) {
-        await gapi.auth2.getAuthInstance().signIn();
-      }
-      const accessToken = gapi.client.getToken().access_token;
-      createPicker(accessToken);
-    }
-  });
+    gapi.load('client:auth2', async () => {
+        await gapi.client.init({
+            apiKey: GOOGLE_API_KEY,
+            clientId: GOOGLE_CLIENT_ID,
+            scope: 'https://www.googleapis.com/auth/drive.readonly'
+        });
+
+        const authInstance = gapi.auth2.getAuthInstance();
+        await authInstance.signIn();
+        const accessToken = authInstance.currentUser.get().getAuthResponse().access_token;
+
+        createPicker(accessToken);
+    });
 }
 
 function createPicker(accessToken) {
-  const picker = new google.picker.PickerBuilder()
-    .addView(google.picker.ViewId.DOCS)
-    .setOAuthToken(accessToken)
-    .setDeveloperKey(GOOGLE_API_KEY)
-    .setCallback(pickerCallback)
-    .build();
-  picker.setVisible(true);
+    gapi.load('picker', {'callback': () => {
+        const picker = new google.picker.PickerBuilder()
+            .addView(google.picker.ViewId.DOCS)
+            .setOAuthToken(accessToken)
+            .setDeveloperKey(GOOGLE_API_KEY)
+            .setCallback(pickerCallback)
+            .build();
+        picker.setVisible(true);
+    }});
 }
 
 function pickerCallback(data) {
-  if (data.action === google.picker.Action.PICKED) {
-    const fileId = data.docs[0].id;
-    downloadAndUploadFromDrive(fileId);
-  }
-}
+    if (data.action === google.picker.Action.PICKED) {
+        const fileId = data.docs[0].id;
+        const downloadUrl = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`;
 
-async function downloadAndUploadFromDrive(fileId) {
-  try {
-    const response = await gapi.client.request({
-      path: `/drive/v3/files/${fileId}?alt=media`,
-      method: 'GET'
-    });
-
-    const fileBlob = new Blob([response.body]);
-    uploadAudio(fileBlob);
-  } catch (error) {
-    console.error(error);
-    alert("Google Drive download failed.");
-  }
+        fetch(downloadUrl, {
+            headers: {
+                "Authorization": `Bearer ${gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token}`
+            }
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const formData = new FormData();
+            formData.append('audio_file', blob, "google_drive_upload.wav");
+            return fetch(`${API_BASE}/upload`, {
+                method: "POST",
+                body: formData
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.session_id) {
+                showResults(data.session_id);
+            } else {
+                alert("Google Drive upload failed.");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Google Drive upload error.");
+        });
+    }
 }
 </script>
 
