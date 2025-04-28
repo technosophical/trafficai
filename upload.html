@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://apis.google.com blob: data:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://apis.google.com https://accounts.google.com; frame-src https://content.googleapis.com https://accounts.google.com; child-src https://content.googleapis.com https://accounts.google.com;"/>
-
-  <title>Upload | Ecoustics New2</title>
+  <title>Upload | Ecoustics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Correct Content-Security-Policy -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://www.googleapis.com https://accounts.google.com https://picker.googleapis.com; frame-src https://accounts.google.com https://content.googleapis.com https://docs.google.com https://picker.googleapis.com;">
+
+  <!-- Load Google API -->
   <script src="https://apis.google.com/js/api.js"></script>
+
   <style>
-    /* Simple styling */
     body {
       font-family: Arial, sans-serif;
       background: #f4f8f5;
@@ -40,11 +42,25 @@
 </head>
 
 <body>
+
+  <h1>Upload Your Recording</h1>
+
+  <input type="file" id="audioFile" accept="audio/*">
+  <br>
+  <button onclick="uploadAudio()">Analyze Uploaded Audio</button>
+  <button onclick="useSample()">Try a Sample</button>
+  <button id="connect-button">Connect to Google</button>
+  <button id="picker-button" style="display:none;">Select from Google Drive</button>
+
+  <div id="result"></div>
+
   <script>
     const API_BASE = "https://trafficai-1.onrender.com";
+    const CLIENT_ID = '380466288422-2smvpbn9f0h5ka4omjrmfdpg19ovvdts.apps.googleusercontent.com';
+    const API_KEY = 'AIzaSyDSZDWXoe4F5CqwFOq6FsIbpvOed2P1E8c';
+    let oauthToken = '';
 
-    // ============================
-    // Manual Upload
+    // ========== Manual Upload
     async function uploadAudio() {
       const fileInput = document.getElementById('audioFile');
       const file = fileInput.files[0];
@@ -53,7 +69,7 @@
         return;
       }
       if (file.size > 200 * 1024 * 1024) {
-        alert("File too large! Maximum is 200MB.");
+        alert("File too large! Max 200MB.");
         return;
       }
 
@@ -69,16 +85,14 @@
       await fetchResults(data.session_id);
     }
 
-    // ============================
-    // Sample
+    // ========== Sample Use
     async function useSample() {
       const response = await fetch(`${API_BASE}/process_sample`);
       const data = await response.json();
       await fetchResults(data.session_id);
     }
 
-    // ============================
-    // Fetch Results
+    // ========== Fetch Results
     async function fetchResults(session_id) {
       const response = await fetch(`${API_BASE}/results/${session_id}`);
       const results = await response.json();
@@ -100,56 +114,44 @@
       `;
     }
 
-    // ============================
-    // Google Drive Upload (NEW)
-    let pickerApiLoaded = false;
-    let oauthToken = '';
-
-    function loadPicker() {
+    // ========== Google Drive Picker Setup
+    function loadGoogleAPI() {
       gapi.load('client:auth2', initClient);
     }
 
-function initClient() {
-  gapi.client.init({
-        apiKey: 'AIzaSyDSZDWXoe4F5CqwFOq6FsIbpvOed2P1E8c',
-        clientId: '380466288422-2smvpbn9f0h5ka4omjrmfdpg19ovvdts.apps.googleusercontent.com',
-    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-    scope: 'https://www.googleapis.com/auth/drive.readonly'
-  }).then(function () {
-    // API is ready, you can use gapi.client.drive now
-    console.log('Google Drive API initialized');
-  }, function(error) {
-    console.log('Error initializing Google Drive API:', error);
-  });
-}
+    function initClient() {
+      gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        scope: 'https://www.googleapis.com/auth/drive.readonly'
+      }).then(function () {
+        console.log('✅ Google API Initialized');
+        document.getElementById('connect-button').style.display = 'inline-block';
+      }, function(error) {
+        console.error('❌ Google API init failed:', error);
+      });
+    }
 
-gapi.load('client:auth2', initClient);
-gapi.auth2.getAuthInstance().isSignedIn.get()
+    document.getElementById('connect-button').addEventListener('click', async function() {
+      const authInstance = gapi.auth2.getAuthInstance();
+      await authInstance.signIn();
+      oauthToken = authInstance.currentUser.get().getAuthResponse().access_token;
+      console.log('✅ Signed in, token acquired');
 
-document.getElementById('connect-button').addEventListener('click', function() {
-  gapi.auth2.getAuthInstance().signIn().then(function() {
-    console.log('User signed in!');
-    // Call the openPicker function directly
-    openPicker();
-  });
-});
+      document.getElementById('picker-button').style.display = 'inline-block';
+    });
 
-
-    function openPicker() {
-      if (!pickerApiLoaded) {
-        alert("Google API still loading. Please wait a moment then try again.");
-        return;
-      }
-
+    document.getElementById('picker-button').addEventListener('click', function() {
       const view = new google.picker.View(google.picker.ViewId.DOCS);
       const picker = new google.picker.PickerBuilder()
-        .setOAuthToken(oauthToken)
         .addView(view)
-        .setDeveloperKey('AIzaSyDSZDWXoe4F5CqwFOq6FsIbpvOed2P1E8c')
+        .setOAuthToken(oauthToken)
+        .setDeveloperKey(API_KEY)
         .setCallback(pickerCallback)
         .build();
       picker.setVisible(true);
-    }
+    });
 
     function pickerCallback(data) {
       if (data.action == google.picker.Action.PICKED) {
@@ -176,20 +178,9 @@ document.getElementById('connect-button').addEventListener('click', function() {
       await fetchResults(data.session_id);
     }
 
-    loadPicker();
+    // Load Google API on page load
+    window.onload = loadGoogleAPI;
   </script>
-  <h1>Upload Your Recording</h1>
 
-  <input type="file" id="audioFile" accept="audio/*">
-  <br>
-  <button onclick="uploadAudio()">Analyze Uploaded Audio</button>
-  <button onclick="useSample()">Try a Sample</button>
-  <button onclick="openPicker()">Select from Google Drive</button>
-  <button id="connect-button">Connect to Google</button>
-
-
-  <div id="result"></div>
-
-  
 </body>
 </html>
