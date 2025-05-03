@@ -129,11 +129,12 @@ async def get_results(session_id: str):
     return {
         "vehicles_detected": len(df),
         "timestamps_sec": df['timestamp_sec'].tolist(),
-        "bioacoustic_index": float(bioacoustic_index),
-        "avg_db": float(avg_db),
-        "db_stddev": float(db_stddev),
-        "silence_ratio": float(silence_ratio)
+        "bioacoustic_index": float(bioacoustic_index) if 'bioacoustic_index' in locals() else None,
+        "avg_db": float(avg_db) if 'avg_db' in locals() else None,
+        "db_stddev": float(db_stddev) if 'db_stddev' in locals() else None,
+        "silence_ratio": float(silence_ratio) if 'silence_ratio' in locals() else None
     }
+
 
 @app.get("/download_csv/{session_id}")
 async def download_csv(session_id: str):
