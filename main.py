@@ -128,7 +128,11 @@ async def get_results(session_id: str):
     df = pd.read_csv(csv_path)
     return {
         "vehicles_detected": len(df),
-        "timestamps_sec": df['timestamp_sec'].tolist()
+        "timestamps_sec": df['timestamp_sec'].tolist(),
+        "bioacoustic_index": float(bioacoustic_index),
+        "avg_db": float(avg_db),
+        "db_stddev": float(db_stddev),
+        "silence_ratio": float(silence_ratio)
     }
 
 @app.get("/download_csv/{session_id}")
