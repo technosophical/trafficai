@@ -32,33 +32,6 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 
 # --- Core Functions ---
 
-def simple_vehicle_detection(audio_path, session_id):
-    """Simple RMS energy threshold vehicle detection."""
-    y, sr = librosa.load(audio_path, sr=16000)
-    frame_length = int(1.0 * sr)
-    hop_length = frame_length
-    rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
-
-    threshold = 0.04  # Adjust sensitivity here
-    vehicle_frames = np.where(rms > threshold)[0]
-    timestamps = librosa.frames_to_time(vehicle_frames, sr=sr, hop_length=hop_length)
-
-    # Merge detections within 3 seconds
-    merged_events = []
-    event_start = None
-    for t in timestamps:
-        if event_start is None:
-            event_start = t
-        elif t - event_start > 3.0:
-            merged_events.append(event_start)
-            event_start = t
-    if event_start is not None:
-        merged_events.append(event_start)
-
-    df = pd.DataFrame({'timestamp_sec': merged_events, 'vehicle_detected': ['yes'] * len(merged_events)})
-    output_csv = f"{PROCESSED_FOLDER}/{session_id}.csv"
-    df.to_csv(output_csv, index=False)
-
 def compute_bioacoustic_metrics(audio_data, sr):
     """
     Compute bioacoustic metrics from audio data.
@@ -87,6 +60,35 @@ def compute_bioacoustic_metrics(audio_data, sr):
         "db_variability": float(db_std),
         "silence_ratio": float(silence_ratio)
     }
+
+def simple_vehicle_detection(audio_path, session_id):
+    """Simple RMS energy threshold vehicle detection."""
+    y, sr = librosa.load(audio_path, sr=16000)
+    frame_length = int(1.0 * sr)
+    hop_length = frame_length
+    rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
+
+    threshold = 0.04  # Adjust sensitivity here
+    vehicle_frames = np.where(rms > threshold)[0]
+    timestamps = librosa.frames_to_time(vehicle_frames, sr=sr, hop_length=hop_length)
+
+    # Merge detections within 3 seconds
+    merged_events = []
+    event_start = None
+    for t in timestamps:
+        if event_start is None:
+            event_start = t
+        elif t - event_start > 3.0:
+            merged_events.append(event_start)
+            event_start = t
+    if event_start is not None:
+        merged_events.append(event_start)
+
+    df = pd.DataFrame({'timestamp_sec': merged_events, 'vehicle_detected': ['yes'] * len(merged_events)})
+    output_csv = f"{PROCESSED_FOLDER}/{session_id}.csv"
+    df.to_csv(output_csv, index=False)
+
+
 
 # --- API Endpoints ---
 
