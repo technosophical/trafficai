@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Upload | Ecoustics New</title>
+  <title>Upload | Ecoustics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://apis.google.com/js/api.js"></script>
   <style>
@@ -25,6 +25,10 @@
     }
     button:hover {
       background-color: #1B5E20;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
     }
     #result {
       margin-top: 30px;
@@ -106,35 +110,45 @@
       gapi.load('client:auth2', initClient);
     }
 
-function initClient() {
-  gapi.client.init({
+    function initClient() {
+      gapi.client.init({
         apiKey: 'AIzaSyDSZDWXoe4F5CqwFOq6FsIbpvOed2P1E8c',
         clientId: '380466288422-2smvpbn9f0h5ka4omjrmfdpg19ovvdts.apps.googleusercontent.com',
-    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-    scope: 'https://www.googleapis.com/auth/drive.readonly'
-  }).then(function () {
-    // API is ready, you can use gapi.client.drive now
-    console.log('Google Drive API initialized');
-  }, function(error) {
-    console.log('Error initializing Google Drive API:', error);
-  });
-}
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+        scope: 'https://www.googleapis.com/auth/drive.readonly'
+      }).then(function () {
+        pickerApiLoaded = true;
+        console.log('Google Drive API initialized');
+        // Enable the connect button after initialization
+        document.getElementById('connect-button').disabled = false;
+      }, function(error) {
+        console.error('Error initializing Google Drive API:', error);
+        alert('Failed to initialize Google Drive. Please try refreshing the page.');
+      });
+    }
 
-gapi.load('client:auth2', initClient);
-gapi.auth2.getAuthInstance().isSignedIn.get()
+    // Initialize Google API
+    loadPicker();
 
-document.getElementById('connect-button').addEventListener('click', function() {
-  gapi.auth2.getAuthInstance().signIn().then(function() {
-    console.log('User signed in!');
-    // Call the openPicker function directly
-    openPicker();
-  });
-});
-
-
-    function openPicker() {
+    document.getElementById('connect-button').addEventListener('click', function() {
       if (!pickerApiLoaded) {
         alert("Google API still loading. Please wait a moment then try again.");
+        return;
+      }
+
+      gapi.auth2.getAuthInstance().signIn().then(function() {
+        console.log('User signed in!');
+        oauthToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+        openPicker();
+      }, function(error) {
+        console.error('Error signing in:', error);
+        alert('Failed to sign in to Google. Please try again.');
+      });
+    });
+
+    function openPicker() {
+      if (!pickerApiLoaded || !oauthToken) {
+        alert("Please connect to Google first.");
         return;
       }
 
@@ -149,9 +163,11 @@ document.getElementById('connect-button').addEventListener('click', function() {
     }
 
     function pickerCallback(data) {
-      if (data.action == google.picker.Action.PICKED) {
+      if (data.action === google.picker.Action.PICKED) {
         const fileId = data.docs[0].id;
         downloadFileFromDrive(fileId);
+      } else if (data.action === google.picker.Action.CANCEL) {
+        console.log('User cancelled the picker');
       }
     }
 
@@ -172,8 +188,6 @@ document.getElementById('connect-button').addEventListener('click', function() {
       const data = await uploadResponse.json();
       await fetchResults(data.session_id);
     }
-
-    loadPicker();
   </script>
   <h1>Upload Your Recording</h1>
 
