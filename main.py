@@ -59,6 +59,35 @@ def simple_vehicle_detection(audio_path, session_id):
     output_csv = f"{PROCESSED_FOLDER}/{session_id}.csv"
     df.to_csv(output_csv, index=False)
 
+def compute_bioacoustic_metrics(audio_data, sr):
+    """
+    Compute bioacoustic metrics from audio data.
+    """
+    # 1. Bioacoustic Index: Sum of normalized energy in 2–8kHz band
+    S = np.abs(librosa.stft(audio_data))
+    freqs = librosa.fft_frequencies(sr=sr)
+    band_mask = (freqs >= 2000) & (freqs <= 8000)
+    bio_index = np.sum(S[band_mask]) / np.sum(S)
+
+    # 2. Average dB level
+    S_db = librosa.amplitude_to_db(S, ref=np.max)
+    avg_db = np.mean(S_db)
+
+    # 3. dB variability
+    db_std = np.std(S_db)
+
+    # 4. Silence Ratio (below -50 dB)
+    silence_thresh = -50
+    silent_frames = np.sum(S_db < silence_thresh)
+    silence_ratio = silent_frames / S_db.size
+
+    return {
+        "bioacoustic_index": float(bio_index),
+        "average_db": float(avg_db),
+        "db_variability": float(db_std),
+        "silence_ratio": float(silence_ratio)
+    }
+
 # --- API Endpoints ---
 
 @app.post("/upload")
